@@ -38,7 +38,7 @@ def build_report(notes: str, engine: str) -> tuple[BugReport, str]:
         return llm.extract(notes), "claude"
     except llm.LLMUnavailable as exc:
         if engine == "claude":
-            raise SystemExit(f"error: {exc}")
+            raise SystemExit(f"error: {exc}") from exc
         print(f"note: AI engine unavailable ({exc}); using offline rules", file=sys.stderr)
         return heuristic.extract(notes), "offline"
 

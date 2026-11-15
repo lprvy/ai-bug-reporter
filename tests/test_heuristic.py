@@ -52,7 +52,10 @@ def test_arrow_chain_becomes_steps():
 
 
 def test_turkish_notes():
-    notes = "Hata: giriş sayfası çöküyor\n1. siteyi aç\n2. giriş yap\nbeklenen: ana sayfa\nolan: boş ekran\nSafari, iPhone 15"
+    notes = (
+        "Hata: giriş sayfası çöküyor\n1. siteyi aç\n2. giriş yap\n"
+        "beklenen: ana sayfa\nolan: boş ekran\nSafari, iPhone 15"
+    )
     r = heuristic.extract(notes)
     assert r.title == "Giriş sayfası çöküyor"
     assert r.severity is Severity.high

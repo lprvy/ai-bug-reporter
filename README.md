@@ -85,6 +85,7 @@ class BugReport(BaseModel):
 
 ```bash
 pip install -e ".[ai,dev]" && pytest     # 32 tests, no network needed
+ruff check .                              # lint (also runs in CI)
 ```
 
 - rule engine: severity rules, step parsing (numbered lists and `a -> b -> c` chains), Turkish notes, truncation, OS name normalisation, whole-word keyword matching
