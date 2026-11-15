@@ -39,6 +39,24 @@ _COMPONENTS = ("checkout", "login", "cart", "search", "profile", "dashboard", "s
                "signup", "payment", "upload", "notifications")
 
 
+_OS_NAMES = {"windows": "Windows", "macos": "macOS", "mac os": "macOS", "ios": "iOS",
+             "android": "Android", "ubuntu": "Ubuntu", "linux": "Linux"}
+
+
+def _has_word(text: str, word: str) -> bool:
+    """True if `word` starts a word in `text` ("api" matches "api call", not "rapid";
+    "freez" still matches "freezes")."""
+    return re.search(r"(?<!\w)" + re.escape(word), text) is not None
+
+
+def _os_name(raw: str) -> str:
+    """Normalise "windows 11" -> "Windows 11", "macos" -> "macOS", "ios 18" -> "iOS 18"."""
+    match = re.match(r"(mac\s?os|[a-z]+)\s*(.*)", raw.strip(), re.I)
+    name, rest = match.group(1), match.group(2)
+    key = re.sub(r"\s+", " ", name.lower())
+    return " ".join(p for p in (_OS_NAMES.get(key, name), rest) if p)
+
+
 def _clean_title(line: str) -> str:
     title = re.sub(r"^(bug|issue|hata)\s*[:\-]\s*", "", line.strip(), flags=re.I).rstrip(".!")
     title = title[0].upper() + title[1:] if title else "Untitled bug"
@@ -60,7 +78,7 @@ def _environment(text: str) -> Environment:
     version = _VERSION.search(text)
     return Environment(
         browser=" ".join(p for p in (browser.group(1).title(), browser.group(2)) if p) if browser else None,
-        os=os_match.group(1).strip() if os_match else None,
+        os=_os_name(os_match.group(1)) if os_match else None,
         device=device.group(1).strip() if device else None,
         app_version=version.group(1) if version else None,
     )
@@ -100,12 +118,12 @@ def extract(notes: str) -> BugReport:
     report = BugReport(
         title=_clean_title(lines[0]),
         severity=_severity(notes),
-        component=next((c for c in _COMPONENTS if c in lower), None),
+        component=next((c for c in _COMPONENTS if _has_word(lower, c)), None),
         environment=_environment(notes),
         steps_to_reproduce=_steps(lines[1:] or lines),
         expected=_first(_EXPECTED, lines),
         actual=_first(_ACTUAL, lines),
-        labels=sorted(label for label, words in _LABEL_RULES.items() if any(w in lower for w in words)),
+        labels=sorted(label for label, words in _LABEL_RULES.items() if any(_has_word(lower, w) for w in words)),
     )
     report.missing_info = missing_info(report)
     return report

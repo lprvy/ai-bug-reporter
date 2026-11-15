@@ -11,8 +11,40 @@ checkout crashes when i apply coupon          ## Checkout crashes when i apply c
 3. go to checkout, enter SAVE10               ### Steps to reproduce
 expected: 10% discount                        1. login as test user ...
 actual: white screen, TypeError               ### Expected / ### Actual / ### Environment
-chrome 131 on windows 11                      ### ❓ Missing information
+chrome 131 on windows 11                      (+ ❓ questions when something is missing)
 ```
+
+<details>
+<summary>Full output for <code>examples/notes.txt</code> (offline engine)</summary>
+
+```markdown
+## Checkout crashes when i apply coupon
+
+**Severity:** 🟠 high
+**Component:** checkout
+**Labels:** `auth`, `crash`, `payment`
+
+### Steps to reproduce
+1. login as test user
+2. add 2 items to cart
+3. go to checkout, enter SAVE10
+
+### Expected
+10% discount
+
+### Actual
+white screen, TypeError in console
+
+### Environment
+| | |
+|---|---|
+| Browser | Chrome 131 |
+| OS | Windows 11 |
+```
+
+Nothing is missing here, so there are no follow-up questions. Leave out the expected result or the browser and the report ends with a **❓ Missing information** list instead.
+
+</details>
 
 ## Two engines
 
@@ -52,10 +84,10 @@ class BugReport(BaseModel):
 ## Tests
 
 ```bash
-pip install -e ".[ai,dev]" && pytest     # 25 tests, no network needed
+pip install -e ".[ai,dev]" && pytest     # 32 tests, no network needed
 ```
 
-- rule engine: severity rules, step parsing (numbered lists and `a -> b -> c` chains), Turkish notes, truncation
+- rule engine: severity rules, step parsing (numbered lists and `a -> b -> c` chains), Turkish notes, truncation, OS name normalisation, whole-word keyword matching
 - Claude engine: the SDK client is **mocked**; tests check the request shape (model, schema, fallbacks) and that refusals, truncated replies and empty input are handled
 - CLI: file/stdin input, size limit, JSON/Markdown output, auto-fallback
 

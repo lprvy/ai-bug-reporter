@@ -78,3 +78,32 @@ def test_long_title_is_truncated():
 def test_empty_notes_rejected():
     with pytest.raises(ValueError):
         heuristic.extract("   \n  ")
+
+
+@pytest.mark.parametrize(
+    ("notes", "expected_os"),
+    [
+        ("broken on windows 11", "Windows 11"),
+        ("happens on macos 15", "macOS 15"),
+        ("iphone on ios 18", "iOS 18"),
+        ("android 15 tablet", "Android 15"),
+        ("ubuntu desktop", "Ubuntu"),
+    ],
+)
+def test_os_name_is_normalised(notes, expected_os):
+    assert heuristic.extract("Title\n" + notes).environment.os == expected_os
+
+
+def test_keywords_match_whole_words_not_substrings():
+    report = heuristic.extract(
+        "Rapid clicks discard the draft\n1. open the editor\n2. click save fast\nit took 1500ms"
+    )
+    assert "api" not in report.labels  # "rapid", "1500ms"
+    assert "payment" not in report.labels  # "discard"
+    assert report.component is None
+
+
+def test_keyword_stems_still_match():
+    report = heuristic.extract("Page freezes after login\nthe app is freezing")
+    assert "performance" in report.labels  # "freez" stem
+    assert "auth" in report.labels
