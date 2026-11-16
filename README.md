@@ -2,7 +2,7 @@
 
 Turn messy bug notes into a clean, reproducible bug report, ready to paste into a GitHub issue.
 
-![tests](https://github.com/lprvy/ai-bug-reporter/actions/workflows/tests.yml/badge.svg)
+[![tests](https://github.com/lprvy/ai-bug-reporter/actions/workflows/tests.yml/badge.svg)](https://github.com/lprvy/ai-bug-reporter/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ```text
 checkout crashes when i apply coupon          ## Checkout crashes when i apply coupon
